@@ -1503,7 +1503,7 @@ class Path(str):
 
 class DirectoryNotEmpty(OSError):
     @staticmethod
-    @contextlib.context_manager
+    @contextlib.contextmanager
     def translate():
         try:
             yield

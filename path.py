@@ -1186,13 +1186,9 @@ class Path(str):
     def rmdir_p(self):
         """ Like :meth:`rmdir`, but does not raise an exception if the
         directory is not empty or does not exist. """
-        try:
-            with contextlib.suppress(FileNotFoundError, FileExistsError):
+        with contextlib.suppress(FileNotFoundError, FileExistsError, DirectoryNotEmpty):
+            with DirectoryNotEmpty.translate():
                 self.rmdir()
-        except OSError:
-            _, e, _ = sys.exc_info()
-            if e.errno != errno.ENOTEMPTY:
-                raise
         return self
 
     def removedirs(self):
@@ -1203,13 +1199,9 @@ class Path(str):
     def removedirs_p(self):
         """ Like :meth:`removedirs`, but does not raise an exception if the
         directory is not empty or does not exist. """
-        try:
-            with contextlib.suppress(FileExistsError):
+        with contextlib.suppress(FileExistsError, DirectoryNotEmpty):
+            with DirectoryNotEmpty.translate():
                 self.removedirs()
-        except OSError:
-            _, e, _ = sys.exc_info()
-            if e.errno != errno.ENOTEMPTY:
-                raise
         return self
 
     # --- Modifying operations on files
@@ -1507,6 +1499,19 @@ class Path(str):
         of special will raise an ImportError.
         """
         return functools.partial(SpecialResolver, cls)
+
+
+class DirectoryNotEmpty(OSError):
+    @staticmethod
+    @contextlib.context_manager
+    def translate():
+        try:
+            yield
+        except OSError:
+            _, e, _ = sys.exc_info()
+            if e.errno == errno.ENOTEMPTY:
+                e.__class__ = DirectoryNotEmpty
+            raise
 
 
 def only_newer(copy_func):

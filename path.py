@@ -37,7 +37,6 @@ import contextlib
 import io
 import importlib
 import itertools
-import platform
 import ntpath
 
 try:

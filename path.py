@@ -711,8 +711,7 @@ class Path(str):
         Keyword arguments work as in :func:`io.open`.  If the file cannot be
         opened, an :class:`~exceptions.OSError` is raised.
         """
-        with io_error_compat():
-            return io.open(self, *args, **kwargs)
+        return io.open(self, *args, **kwargs)
 
     def bytes(self):
         """ Open this file, read all bytes, return them as a string. """

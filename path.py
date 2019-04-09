@@ -1336,7 +1336,7 @@ class Path(str):
 
     def merge_tree(
             self, dst, symlinks=False,
-            *
+            *,
             update=False,
             copy_function=shutil.copy2,
             ignore=lambda dir, contents: []):

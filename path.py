@@ -1186,7 +1186,8 @@ class Path(str):
     def rmdir_p(self):
         """ Like :meth:`rmdir`, but does not raise an exception if the
         directory is not empty or does not exist. """
-        with contextlib.suppress(FileNotFoundError, FileExistsError, DirectoryNotEmpty):
+        suppressed = FileNotFoundError, FileExistsError, DirectoryNotEmpty
+        with contextlib.suppress(suppressed):
             with DirectoryNotEmpty.translate():
                 self.rmdir()
         return self
